@@ -15,6 +15,10 @@
     <meta property="og:url" content="https://kazrobotics.kz">
     <meta property="og:image" content="https://kazrobotics.kz/assets/images/og-image.jpg">
 
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
@@ -29,6 +33,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
 
     <!-- Preload critical resources -->
     <link rel="preload" href="css/components.css" as="style">
@@ -39,6 +44,7 @@
         <style>
             .no-js .hero__visual { display: none; }
             .no-js .puzzle-tile { opacity: 1 !important; transform: none !important; }
+            .no-js .theme-toggle { display: none; }
         </style>
     </noscript>
 </head>
@@ -48,6 +54,15 @@
 
 <!-- Skip to main content -->
 <a href="#main-content" class="skip-link">Перейти к основному содержанию</a>
+
+<!-- Preloader -->
+<div class="preloader" aria-hidden="true">
+    <div class="preloader__robot">
+        <div class="preloader__eye preloader__eye--left"></div>
+        <div class="preloader__eye preloader__eye--right"></div>
+    </div>
+    <p class="preloader__text">Загрузка системы KazRobotics...</p>
+</div>
 
 <div class="page">
     <!-- Header -->
@@ -73,10 +88,31 @@
                 <a class="nav__link" href="#partners">Партнёры</a>
             </nav>
 
-            <!-- Desktop Auth Buttons -->
-            <div class="header__auth">
-                <a href="#login" class="btn btn--ghost btn--sm" aria-label="Войти в систему">Вход</a>
-                <a href="#register" class="btn btn--primary btn--sm" aria-label="Зарегистрироваться">Регистрация</a>
+            <!-- Desktop Actions -->
+            <div class="header__actions">
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" type="button" aria-label="Переключить тему">
+                    <svg class="theme-toggle__icon theme-toggle__icon--sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 1V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 21V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M1 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg class="theme-toggle__icon theme-toggle__icon--moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <!-- Auth Buttons -->
+                <div class="header__auth">
+                    <a href="#login" class="btn btn--ghost btn--sm" aria-label="Войти в систему">Вход</a>
+                    <a href="#register" class="btn btn--primary btn--sm" aria-label="Зарегистрироваться">Регистрация</a>
+                </div>
             </div>
 
             <!-- Mobile menu button -->
@@ -98,6 +134,27 @@
                     <a class="mobile-nav__link" href="#education">Обучение</a>
                     <a class="mobile-nav__link" href="#partners">Партнёры</a>
                 </nav>
+
+                <!-- Mobile Theme Toggle -->
+                <div class="mobile-theme-toggle">
+                    <button class="theme-toggle" type="button" aria-label="Переключить тему">
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 1V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 21V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M1 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12H23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="theme-toggle__text">Тема</span>
+                    </button>
+                </div>
 
                 <!-- Mobile Auth Buttons -->
                 <div class="mobile-auth">
@@ -469,10 +526,11 @@
 </div>
 
 <!-- JavaScript -->
-<script src="js/data.js"></script>
-<script src="js/puzzle.js"></script>
-<script src="js/robot.js"></script>
-<script src="js/main.js"></script>
+<script src="js/data.js" type="module"></script>
+<script src="js/theme.js" type="module"></script>
+<script src="js/puzzle.js" type="module"></script>
+<script src="js/robot.js" type="module"></script>
+<script src="js/main.js" type="module"></script>
 
 <!-- No-JS fallback -->
 <script>

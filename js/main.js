@@ -1,3 +1,4 @@
+// main.js
 import { newsMock, systemStats } from './data.js';
 
 class KazRoboticsApp {
@@ -7,12 +8,14 @@ class KazRoboticsApp {
         this.currentFilter = 'all';
         this.isMobile = window.innerWidth < 768;
         this.menuOpen = false;
+        this.preloader = document.querySelector('.preloader');
 
         this.init();
     }
 
     init() {
         this.setupAccessibility();
+        this.setupTheme();
         this.setupNews();
         this.setupEventListeners();
         this.setupAnimations();
@@ -24,6 +27,9 @@ class KazRoboticsApp {
 
         // Запуск системного мониторинга
         this.startSystemMonitoring();
+
+        // Скрываем preloader после загрузки
+        this.hidePreloader();
     }
 
     setupAccessibility() {
@@ -41,6 +47,26 @@ class KazRoboticsApp {
                     window.robotAssistant.updateModuleStats(tileId);
                 }
             }
+
+            // Активация фильтров новостей по клавишам
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const activeFilterBtn = document.querySelector('.news__control-btn.active');
+                if (activeFilterBtn) {
+                    e.preventDefault();
+                    const filters = Array.from(this.newsFilters);
+                    const currentIndex = filters.indexOf(activeFilterBtn);
+                    let nextIndex;
+
+                    if (e.key === 'ArrowLeft') {
+                        nextIndex = currentIndex > 0 ? currentIndex - 1 : filters.length - 1;
+                    } else {
+                        nextIndex = currentIndex < filters.length - 1 ? currentIndex + 1 : 0;
+                    }
+
+                    filters[nextIndex].click();
+                    filters[nextIndex].focus();
+                }
+            }
         });
 
         // Skip links
@@ -56,6 +82,41 @@ class KazRoboticsApp {
                     setTimeout(() => target.removeAttribute('tabindex'), 1000);
                 }
             });
+        });
+
+        // Улучшенные focus стили
+        document.addEventListener('focusin', (e) => {
+            if (e.target.matches('button, a, input, textarea, select')) {
+                e.target.classList.add('focused');
+            }
+        });
+
+        document.addEventListener('focusout', (e) => {
+            if (e.target.matches('button, a, input, textarea, select')) {
+                e.target.classList.remove('focused');
+            }
+        });
+    }
+
+    setupTheme() {
+        // Проверяем сохранённую тему
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Обновляем робота при смене темы
+        document.addEventListener('themechange', (e) => {
+            if (window.robotAssistant) {
+                const themeName = e.detail.theme === 'light' ? 'Светлая' : 'Тёмная';
+                window.robotAssistant.showHint(`Тема изменена на ${themeName.toLowerCase()}`);
+            }
+
+            // Добавляем класс для анимации смены темы
+            document.body.classList.add('theme-changing');
+            setTimeout(() => {
+                document.body.classList.remove('theme-changing');
+            }, 300);
         });
     }
 
@@ -76,8 +137,10 @@ class KazRoboticsApp {
         this.newsFilters.forEach(btn => {
             if (btn.dataset.filter === filter) {
                 btn.classList.add('active');
+                btn.setAttribute('aria-current', 'true');
             } else {
                 btn.classList.remove('active');
+                btn.removeAttribute('aria-current');
             }
         });
     }
@@ -143,6 +206,9 @@ class KazRoboticsApp {
                 if (window.robotAssistant) {
                     window.robotAssistant.showHint(`Показаны новости: ${filter === 'all' ? 'Все' : filter}`);
                 }
+
+                // Аналитика
+                this.trackEvent('news_filter', { filter });
             });
         });
 
@@ -160,12 +226,21 @@ class KazRoboticsApp {
 
         // Smooth scroll for anchor links
         this.setupSmoothScroll();
+
+        // Theme change effects
+        this.setupThemeEffects();
+
+        // Кнопки авторизации
+        this.setupAuthButtons();
+
+        // Интерактивные элементы
+        this.setupInteractiveElements();
     }
 
     setupMobileMenu() {
         const burger = document.querySelector('.burger');
         const mobileMenu = document.querySelector('.mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-nav__link, .mobile-auth .btn');
+        const mobileLinks = document.querySelectorAll('.mobile-nav__link, .mobile-auth .btn, .mobile-theme-toggle .theme-toggle');
         const body = document.body;
 
         if (!burger || !mobileMenu) return;
@@ -188,6 +263,13 @@ class KazRoboticsApp {
             if (this.menuOpen &&
                 !e.target.closest('.mobile-menu') &&
                 !e.target.closest('.burger')) {
+                this.closeMobileMenu();
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.menuOpen) {
                 this.closeMobileMenu();
             }
         });
@@ -226,8 +308,12 @@ class KazRoboticsApp {
         if (window.robotAssistant) {
             if (this.menuOpen) {
                 window.robotAssistant.showHint('Мобильное меню открыто');
+                window.robotAssistant.setStatus('ACTIVE');
             }
         }
+
+        // Аналитика
+        this.trackEvent('mobile_menu', { action: this.menuOpen ? 'open' : 'close' });
     }
 
     closeMobileMenu() {
@@ -251,6 +337,11 @@ class KazRoboticsApp {
 
         body.classList.remove('menu-open');
         body.style.overflow = '';
+
+        // Возвращаем фокус на бургер-кнопку
+        setTimeout(() => {
+            burger?.focus();
+        }, 100);
     }
 
     handleScroll() {
@@ -273,6 +364,22 @@ class KazRoboticsApp {
             progress.style.width = `${pctScrolled}%`;
             progress.setAttribute('aria-valuenow', pctScrolled);
         }
+
+        // Анимации при скролле
+        this.handleScrollAnimations();
+    }
+
+    handleScrollAnimations() {
+        // Анимация для элементов при скролле
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        animatedElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight - 100;
+
+            if (isVisible) {
+                el.classList.add('animated');
+            }
+        });
     }
 
     setupResizeObserver() {
@@ -281,6 +388,7 @@ class KazRoboticsApp {
         const observer = new ResizeObserver((entries) => {
             entries.forEach(entry => {
                 const width = entry.contentRect.width;
+                const wasMobile = this.isMobile;
                 this.isMobile = width < 768;
 
                 // Закрываем меню при переходе на десктоп
@@ -289,7 +397,7 @@ class KazRoboticsApp {
                 }
 
                 // Обновляем поведение на мобильных устройствах
-                if (this.isMobile && window.robotAssistant) {
+                if (this.isMobile && !wasMobile && window.robotAssistant) {
                     window.robotAssistant.showHint('Используйте свайпы для навигации', 3000);
                 }
             });
@@ -304,7 +412,7 @@ class KazRoboticsApp {
             anchor.addEventListener('click', (e) => {
                 const href = anchor.getAttribute('href');
 
-                // Пропускаем ссылки на другие страницы
+                // Пропускаем ссылки на другие страницы и пустые ссылки
                 if (href === '#' || href.includes('.html')) return;
 
                 const targetId = href.substring(1);
@@ -320,7 +428,7 @@ class KazRoboticsApp {
 
                     // Плавный скролл
                     window.scrollTo({
-                        top: target.offsetTop - 80,
+                        top: target.offsetTop - 100,
                         behavior: 'smooth'
                     });
 
@@ -330,8 +438,24 @@ class KazRoboticsApp {
                         target.focus();
                         setTimeout(() => target.removeAttribute('tabindex'), 1000);
                     }, 500);
+
+                    // Обновляем активную ссылку в навигации
+                    this.updateActiveNavLink(href);
+
+                    // Аналитика
+                    this.trackEvent('anchor_click', { target: targetId });
                 }
             });
+        });
+    }
+
+    updateActiveNavLink(href) {
+        // Обновляем активную ссылку в навигации
+        document.querySelectorAll('.nav__link, .mobile-nav__link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === href) {
+                link.classList.add('active');
+            }
         });
     }
 
@@ -352,8 +476,91 @@ class KazRoboticsApp {
                         window.robotAssistant.setStatus('ACTIVE');
                         window.robotAssistant.celebrate();
                     }
-                    this.showToast('Форма успешно отправлена!');
+                    this.showToast('Форма успешно отправлена!', 'success');
+
+                    // Сброс формы
+                    form.reset();
                 }, 1500);
+
+                // Аналитика
+                this.trackEvent('form_submit', { form_id: form.id || 'unknown' });
+            });
+        });
+
+        // Валидация форм
+        forms.forEach(form => {
+            const inputs = form.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('invalid', (e) => {
+                    e.preventDefault();
+                    this.showToast('Пожалуйста, заполните поле правильно', 'error');
+                    input.classList.add('invalid');
+                });
+
+                input.addEventListener('input', () => {
+                    input.classList.remove('invalid');
+                });
+            });
+        });
+    }
+
+    setupThemeEffects() {
+        // Добавляем класс при смене темы для плавных переходов
+        document.addEventListener('themechange', () => {
+            document.body.classList.add('theme-changing');
+            setTimeout(() => {
+                document.body.classList.remove('theme-changing');
+            }, 300);
+        });
+    }
+
+    setupAuthButtons() {
+        // Обработка кнопок авторизации
+        const authButtons = document.querySelectorAll('[href="#login"], [href="#register"]');
+        authButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                if (window.robotAssistant) {
+                    window.robotAssistant.showHint('Система авторизации в разработке');
+                    window.robotAssistant.setStatus('WARNING');
+
+                    setTimeout(() => {
+                        window.robotAssistant.setStatus('ACTIVE');
+                    }, 2000);
+                }
+
+                this.showToast('Система авторизации скоро будет доступна', 'info');
+
+                // Аналитика
+                const action = btn.getAttribute('href') === '#login' ? 'login_click' : 'register_click';
+                this.trackEvent(action);
+            });
+        });
+    }
+
+    setupInteractiveElements() {
+        // Интерактивные элементы
+        const interactiveElements = document.querySelectorAll('.btn, .puzzle-tile, .news-card');
+
+        interactiveElements.forEach(el => {
+            // Добавляем эффект при наведении
+            el.addEventListener('mouseenter', () => {
+                if (window.robotAssistant && !this.isMobile) {
+                    window.robotAssistant.followElement(el);
+                }
+            });
+
+            // Добавляем эффект при клике
+            el.addEventListener('click', (e) => {
+                if (el.classList.contains('puzzle-tile')) {
+                    const tileId = el.dataset.tile;
+                    this.trackEvent('module_click', { module: tileId });
+
+                    if (window.robotAssistant) {
+                        window.robotAssistant.showHint(`Переход к модулю: ${el.querySelector('.puzzle-tile__title').textContent}`);
+                    }
+                }
             });
         });
     }
@@ -386,12 +593,23 @@ class KazRoboticsApp {
         }, observerOptions);
 
         // Наблюдаем за элементами для анимации
-        const animatedElements = document.querySelectorAll('.puzzle-tile, .news-card, .partner-card');
-        animatedElements.forEach(el => observer.observe(el));
+        const animatedElements = document.querySelectorAll('.puzzle-tile, .news-card, .partner-card, .section-title, .section-subtitle');
+        animatedElements.forEach(el => {
+            el.classList.add('animate-on-scroll');
+            observer.observe(el);
+        });
 
         // Анимация счетчиков статистики
         const statValues = document.querySelectorAll('.hero__stat-value[data-count]');
         statValues.forEach(el => observer.observe(el));
+
+        // Анимация для hero
+        const heroContent = document.querySelector('.hero__content');
+        if (heroContent) {
+            setTimeout(() => {
+                heroContent.classList.add('animated');
+            }, 300);
+        }
     }
 
     animateStatCounter(element) {
@@ -472,6 +690,12 @@ class KazRoboticsApp {
         setInterval(() => {
             this.updateOnlineStats();
         }, 30000);
+
+        // Мониторинг ошибок
+        window.addEventListener('error', (e) => {
+            console.error('Ошибка приложения:', e.error);
+            this.trackEvent('error', { message: e.message, filename: e.filename });
+        });
     }
 
     updateOnlineStats() {
@@ -485,6 +709,10 @@ class KazRoboticsApp {
 
         if (newValue !== current) {
             this.animateValue(onlineCountElement, current, newValue, 500);
+
+            if (window.robotAssistant && Math.random() > 0.8) {
+                window.robotAssistant.showHint(`Онлайн пользователей: ${newValue}`, 2000);
+            }
         }
     }
 
@@ -519,6 +747,14 @@ class KazRoboticsApp {
                 document.head.appendChild(link);
             });
         }
+
+        // Оптимизация для мобильных устройств
+        if (this.isMobile) {
+            // Отключаем некоторые анимации на слабых устройствах
+            if ('hardwareConcurrency' in navigator && navigator.hardwareConcurrency < 4) {
+                document.body.classList.add('reduce-animations');
+            }
+        }
     }
 
     checkBrowserSupport() {
@@ -538,6 +774,11 @@ class KazRoboticsApp {
                 `Некоторые функции могут работать медленнее. Обновите браузер.`,
                 5000
             );
+        }
+
+        // Проверка поддержки Service Worker (для будущего PWA)
+        if ('serviceWorker' in navigator) {
+            console.log('Service Worker поддерживается');
         }
     }
 
@@ -560,17 +801,72 @@ class KazRoboticsApp {
         // Закрытие
         const closeBtn = toast.querySelector('.toast__close');
         closeBtn.addEventListener('click', () => {
-            toast.classList.remove('toast--show');
-            setTimeout(() => toast.remove(), 300);
+            this.closeToast(toast);
         });
 
         // Автоматическое закрытие
         setTimeout(() => {
             if (toast.parentNode) {
-                toast.classList.remove('toast--show');
-                setTimeout(() => toast.remove(), 300);
+                this.closeToast(toast);
             }
         }, 5000);
+    }
+
+    closeToast(toast) {
+        toast.classList.remove('toast--show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 300);
+    }
+
+    hidePreloader() {
+        if (!this.preloader) return;
+
+        // Ждем полной загрузки страницы
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                this.preloader.style.opacity = '0';
+                this.preloader.style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    this.preloader.remove();
+
+                    // Показываем приветственное сообщение
+                    if (window.robotAssistant) {
+                        setTimeout(() => {
+                            window.robotAssistant.showHint('Добро пожаловать в KazRobotics!', 4000);
+                            window.robotAssistant.blinkEyes(2);
+                        }, 500);
+                    }
+                }, 300);
+            }, 500);
+        });
+
+        // Фолбэк на случай если load событие не сработает
+        setTimeout(() => {
+            if (this.preloader.parentNode) {
+                this.preloader.style.opacity = '0';
+                setTimeout(() => this.preloader.remove(), 300);
+            }
+        }, 3000);
+    }
+
+    trackEvent(eventName, data = {}) {
+        // Заглушка для аналитики
+        const eventData = {
+            event: eventName,
+            timestamp: new Date().toISOString(),
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            ...data
+        };
+
+        console.log('Аналитика:', eventData);
+
+        // В будущем можно добавить отправку на сервер
+        // fetch('/api/analytics', { method: 'POST', body: JSON.stringify(eventData) });
     }
 
     escapeHtml(str) {
@@ -579,20 +875,24 @@ class KazRoboticsApp {
         return div.innerHTML;
     }
 
-    // Публичные методы
+    // Публичные методы для взаимодействия с другими компонентами
     updateNews(newsData) {
         // Для будущего обновления новостей через API
         console.log('Обновление новостей:', newsData);
     }
 
     setTheme(theme) {
-        // Переключение темы (будущая функциональность)
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-
-        if (window.robotAssistant) {
-            window.robotAssistant.showHint(`Тема изменена: ${theme}`);
+        if (window.themeManager) {
+            window.themeManager.setTheme(theme);
         }
+    }
+
+    getCurrentTheme() {
+        return document.documentElement.getAttribute('data-theme') || 'dark';
+    }
+
+    isMenuOpen() {
+        return this.menuOpen;
     }
 
     // Метод для обновления навигации
@@ -617,13 +917,6 @@ class KazRoboticsApp {
 
 // Инициализация при полной загрузке страницы
 window.addEventListener('load', () => {
-    // Убираем preloader если есть
-    const preloader = document.querySelector('.preloader');
-    if (preloader) {
-        preloader.style.opacity = '0';
-        setTimeout(() => preloader.remove(), 300);
-    }
-
     // Определяем активную страницу
     const currentPath = window.location.pathname;
     const activeLink = currentPath.includes('about.html') ? 'about.html' :
@@ -643,14 +936,20 @@ window.addEventListener('load', () => {
         }
     }, 100);
 
-    // Отправляем аналитику (заглушка)
+    // Отправляем аналитику загрузки
+    window.app.trackEvent('page_load', {
+        path: currentPath,
+        theme: window.app.getCurrentTheme(),
+        is_mobile: window.app.isMobile
+    });
+
     console.log('KazRobotics Frontend v0.1.0 запущен');
 
     // Проверяем авторизацию (будущая функциональность)
     setTimeout(() => {
         if (window.robotAssistant && !localStorage.getItem('userToken')) {
             window.robotAssistant.showHint(
-                'Зарегистрируйтесь для дохода ко всем функциям',
+                'Зарегистрируйтесь для доступа ко всем функциям',
                 5000
             );
         }
@@ -666,6 +965,16 @@ window.addEventListener('error', (e) => {
             'Произошла ошибка в приложении. Мы уже работаем над исправлением.',
             'error'
         );
+    }
+
+    // Отправляем ошибку в аналитику
+    if (window.app) {
+        window.app.trackEvent('error', {
+            message: e.message,
+            filename: e.filename,
+            lineno: e.lineno,
+            colno: e.colno
+        });
     }
 });
 
@@ -687,7 +996,8 @@ window.addEventListener('beforeunload', () => {
     const state = {
         lastVisited: new Date().toISOString(),
         activeFilter: window.app?.currentFilter || 'all',
-        scrollPosition: window.scrollY
+        scrollPosition: window.scrollY,
+        theme: window.app?.getCurrentTheme() || 'dark'
     };
 
     sessionStorage.setItem('appState', JSON.stringify(state));
@@ -706,9 +1016,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.scrollTo(0, state.scrollPosition);
                 }, 100);
             }
+
+            // Восстанавливаем тему если нет сохраненной
+            if (!localStorage.getItem('theme') && state.theme) {
+                document.documentElement.setAttribute('data-theme', state.theme);
+            }
         }
     } catch (e) {
         console.warn('Не удалось восстановить состояние:', e);
+    }
+});
+
+// Обработка офлайн/онлайн статуса
+window.addEventListener('online', () => {
+    if (window.robotAssistant) {
+        window.robotAssistant.setStatus('ACTIVE');
+        window.robotAssistant.showHint('Соединение восстановлено');
+    }
+
+    if (window.app) {
+        window.app.showToast('Соединение восстановлено', 'success');
+    }
+});
+
+window.addEventListener('offline', () => {
+    if (window.robotAssistant) {
+        window.robotAssistant.setStatus('ERROR');
+        window.robotAssistant.showHint('Потеряно соединение с интернетом');
+    }
+
+    if (window.app) {
+        window.app.showToast('Потеряно соединение с интернетом', 'error');
     }
 });
 
