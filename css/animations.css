@@ -1,0 +1,213 @@
+/* Анимации */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Toast уведомления */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--stroke-default);
+    border-left: 4px solid var(--green-active);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-tooltip);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all var(--transition-normal);
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+}
+
+.toast--show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast--error {
+    border-left-color: var(--red-error);
+}
+
+.toast--warning {
+    border-left-color: var(--yellow-warning);
+}
+
+.toast--info {
+    border-left-color: var(--burgundy-accent);
+}
+
+.toast__message {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.toast__close {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.toast__close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    transition: opacity var(--transition-normal);
+}
+
+.preloader__robot {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin-bottom: var(--space-lg);
+}
+
+.preloader__eye {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: var(--burgundy-accent);
+    border-radius: 50%;
+    animation: eye-blink 2s infinite;
+}
+
+.preloader__eye--left {
+    top: 25px;
+    left: 20px;
+}
+
+.preloader__eye--right {
+    top: 25px;
+    right: 20px;
+}
+
+.preloader__text {
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    animation: fadeIn 1s ease infinite alternate;
+}
+
+@keyframes eye-blink {
+    0%, 40%, 100% {
+        transform: scaleY(1);
+    }
+    20% {
+        transform: scaleY(0.1);
+    }
+}
+
+/* Progress bar */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--burgundy-main), var(--burgundy-accent));
+    z-index: var(--z-modal);
+    transition: width 0.3s ease;
+}
+
+/* Анимации при скролле */
+.animate-in {
+    animation: slideInUp 0.6s ease forwards;
+}
+
+/* Отключение анимаций для пользователей, которые их не любят */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

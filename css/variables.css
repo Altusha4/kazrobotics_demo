@@ -1,0 +1,78 @@
+:root {
+    /* Цветовая палитра */
+    --gray-dark: #0f0f0f;
+    --gray-medium: #1a1a1a;
+    --gray-light: #f2f2f2;
+    --gray-muted: rgba(255, 255, 255, 0.6);
+
+    --burgundy-main: #7a1e2b;
+    --burgundy-accent: #a83242;
+    --burgundy-light: rgba(168, 50, 66, 0.15);
+
+    --green-active: #4ADE80;
+    --yellow-warning: #FBBF24;
+    --red-error: #EF4444;
+
+    --white: #ffffff;
+    --black: #000000;
+
+    /* Системные цвета */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.78);
+    --text-tertiary: rgba(255, 255, 255, 0.6);
+
+    --bg-primary: #171717;
+    --bg-secondary: #0f0f0f;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+
+    --stroke-default: rgba(255, 255, 255, 0.12);
+    --stroke-hover: rgba(168, 50, 66, 0.4);
+    --stroke-active: rgba(168, 50, 66, 0.6);
+
+    /* Тени */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 30px rgba(168, 50, 66, 0.3);
+
+    /* Радиусы */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Шрифты */
+    --font-title: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    --font-text: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Mono", "Segoe UI Mono", monospace;
+
+    /* Отступы */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* Анимации */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 350ms ease;
+    --transition-bounce: 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Максимальные ширины */
+    --container-sm: 640px;
+    --container-md: 768px;
+    --container-lg: 1024px;
+    --container-xl: 1280px;
+    --container: 1200px;
+
+    /* Z-индексы */
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-modal: 30;
+    --z-popover: 40;
+    --z-tooltip: 50;
+}
