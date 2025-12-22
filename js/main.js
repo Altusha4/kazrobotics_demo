@@ -22,25 +22,62 @@ class KazRoboticsApp {
         this.setupPerformance();
         this.checkBrowserSupport();
 
-        // Инициализация статистики
         this.initStatsCounters();
-
-        // Запуск системного мониторинга
         this.startSystemMonitoring();
-
-        // Скрываем preloader после загрузки
         this.hidePreloader();
     }
 
+    initStatsCounters() {
+        const statsData = {
+            'Активных проектов': systemStats.activeProjects,
+            'Участников': systemStats.totalUsers,
+            'Городов': systemStats.totalCities
+        };
+
+        const statElements = document.querySelectorAll('.hero__stat');
+        statElements.forEach((statElement, index) => {
+            const labelElement = statElement.querySelector('.hero__stat-label');
+            const valueElement = statElement.querySelector('.hero__stat-value');
+
+            if (labelElement && valueElement) {
+                const labelText = labelElement.textContent.trim();
+                const statValue = statsData[labelText];
+
+                if (statValue) {
+                    valueElement.dataset.count = statValue;
+                    this.animateCounter(valueElement, 0, statValue, 1500);
+                }
+            }
+        });
+    }
+
+    animateCounter(element, start, end, duration) {
+        if (start === end) return;
+
+        let startTime = null;
+        const updateCounter = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+
+            const currentValue = Math.floor(start + (end - start) * progress);
+            element.textContent = currentValue.toLocaleString('ru-RU');
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = end.toLocaleString('ru-RU');
+            }
+        };
+
+        requestAnimationFrame(updateCounter);
+    }
+
     setupAccessibility() {
-        // Улучшение доступности
         document.addEventListener('keydown', (e) => {
-            // Закрытие мобильного меню по ESC
             if (e.key === 'Escape') {
                 this.closeMobileMenu();
             }
 
-            // Навигация по плиткам
             if (e.key === 'Tab' && document.activeElement.classList.contains('puzzle-tile')) {
                 const tileId = document.activeElement.dataset.tile;
                 if (window.robotAssistant) {
@@ -48,7 +85,6 @@ class KazRoboticsApp {
                 }
             }
 
-            // Активация фильтров новостей по клавишам
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                 const activeFilterBtn = document.querySelector('.news__control-btn.active');
                 if (activeFilterBtn) {
@@ -69,7 +105,6 @@ class KazRoboticsApp {
             }
         });
 
-        // Skip links
         const skipLinks = document.querySelectorAll('.skip-link');
         skipLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -84,7 +119,6 @@ class KazRoboticsApp {
             });
         });
 
-        // Улучшенные focus стили
         document.addEventListener('focusin', (e) => {
             if (e.target.matches('button, a, input, textarea, select')) {
                 e.target.classList.add('focused');
@@ -99,20 +133,17 @@ class KazRoboticsApp {
     }
 
     setupTheme() {
-        // Проверяем сохранённую тему
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
 
-        // Обновляем робота при смене темы
         document.addEventListener('themechange', (e) => {
             if (window.robotAssistant) {
                 const themeName = e.detail.theme === 'light' ? 'Светлая' : 'Тёмная';
                 window.robotAssistant.showHint(`Тема изменена на ${themeName.toLowerCase()}`);
             }
 
-            // Добавляем класс для анимации смены темы
             document.body.classList.add('theme-changing');
             setTimeout(() => {
                 document.body.classList.remove('theme-changing');
@@ -122,7 +153,6 @@ class KazRoboticsApp {
 
     setupNews() {
         if (!this.newsGrid) return;
-
         this.renderNews(this.currentFilter);
     }
 
@@ -133,7 +163,6 @@ class KazRoboticsApp {
 
         this.newsGrid.innerHTML = filteredNews.map(item => this.createNewsCard(item)).join('');
 
-        // Обновляем активный фильтр
         this.newsFilters.forEach(btn => {
             if (btn.dataset.filter === filter) {
                 btn.classList.add('active');
@@ -195,45 +224,27 @@ class KazRoboticsApp {
     }
 
     setupEventListeners() {
-        // Фильтрация новостей
         this.newsFilters?.forEach(btn => {
             btn.addEventListener('click', () => {
                 const filter = btn.dataset.filter;
                 this.currentFilter = filter;
                 this.renderNews(filter);
 
-                // Обновляем робота
                 if (window.robotAssistant) {
                     window.robotAssistant.showHint(`Показаны новости: ${filter === 'all' ? 'Все' : filter}`);
                 }
 
-                // Аналитика
                 this.trackEvent('news_filter', { filter });
             });
         });
 
-        // Mobile menu functionality
         this.setupMobileMenu();
-
-        // Header scroll effect
         window.addEventListener('scroll', this.handleScroll.bind(this));
-
-        // Resize observer
         this.setupResizeObserver();
-
-        // Form submissions (будущая реализация)
         this.setupForms();
-
-        // Smooth scroll for anchor links
         this.setupSmoothScroll();
-
-        // Theme change effects
         this.setupThemeEffects();
-
-        // Кнопки авторизации
         this.setupAuthButtons();
-
-        // Интерактивные элементы
         this.setupInteractiveElements();
     }
 
@@ -245,20 +256,17 @@ class KazRoboticsApp {
 
         if (!burger || !mobileMenu) return;
 
-        // Toggle mobile menu
         burger.addEventListener('click', (e) => {
             e.stopPropagation();
             this.toggleMobileMenu();
         });
 
-        // Close menu when clicking on links
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 this.closeMobileMenu();
             });
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (this.menuOpen &&
                 !e.target.closest('.mobile-menu') &&
@@ -267,14 +275,12 @@ class KazRoboticsApp {
             }
         });
 
-        // Close menu on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.menuOpen) {
                 this.closeMobileMenu();
             }
         });
 
-        // Prevent body scroll when menu is open
         mobileMenu.addEventListener('touchmove', (e) => {
             if (this.menuOpen) {
                 e.preventDefault();
@@ -300,11 +306,8 @@ class KazRoboticsApp {
         }
 
         body.classList.toggle('menu-open', this.menuOpen);
-
-        // Lock body scroll when menu is open
         body.style.overflow = this.menuOpen ? 'hidden' : '';
 
-        // Update robot assistant
         if (window.robotAssistant) {
             if (this.menuOpen) {
                 window.robotAssistant.showHint('Мобильное меню открыто');
@@ -312,7 +315,6 @@ class KazRoboticsApp {
             }
         }
 
-        // Аналитика
         this.trackEvent('mobile_menu', { action: this.menuOpen ? 'open' : 'close' });
     }
 
@@ -338,7 +340,6 @@ class KazRoboticsApp {
         body.classList.remove('menu-open');
         body.style.overflow = '';
 
-        // Возвращаем фокус на бургер-кнопку
         setTimeout(() => {
             burger?.focus();
         }, 100);
@@ -354,7 +355,6 @@ class KazRoboticsApp {
             header?.classList.remove('scrolled');
         }
 
-        // Progress bar
         const progress = document.querySelector('.progress-bar');
         if (progress) {
             const winHeight = window.innerHeight;
@@ -365,12 +365,10 @@ class KazRoboticsApp {
             progress.setAttribute('aria-valuenow', pctScrolled);
         }
 
-        // Анимации при скролле
         this.handleScrollAnimations();
     }
 
     handleScrollAnimations() {
-        // Анимация для элементов при скролле
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
         animatedElements.forEach(el => {
             const rect = el.getBoundingClientRect();
@@ -391,12 +389,10 @@ class KazRoboticsApp {
                 const wasMobile = this.isMobile;
                 this.isMobile = width < 768;
 
-                // Закрываем меню при переходе на десктоп
                 if (!this.isMobile && this.menuOpen) {
                     this.closeMobileMenu();
                 }
 
-                // Обновляем поведение на мобильных устройствах
                 if (this.isMobile && !wasMobile && window.robotAssistant) {
                     window.robotAssistant.showHint('Используйте свайпы для навигации', 3000);
                 }
@@ -407,12 +403,10 @@ class KazRoboticsApp {
     }
 
     setupSmoothScroll() {
-        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
                 const href = anchor.getAttribute('href');
 
-                // Пропускаем ссылки на другие страницы и пустые ссылки
                 if (href === '#' || href.includes('.html')) return;
 
                 const targetId = href.substring(1);
@@ -421,28 +415,22 @@ class KazRoboticsApp {
                 if (target) {
                     e.preventDefault();
 
-                    // Закрываем мобильное меню если открыто
                     if (this.menuOpen) {
                         this.closeMobileMenu();
                     }
 
-                    // Плавный скролл
                     window.scrollTo({
                         top: target.offsetTop - 100,
                         behavior: 'smooth'
                     });
 
-                    // Фокусировка на элементе для доступности
                     setTimeout(() => {
                         target.setAttribute('tabindex', '-1');
                         target.focus();
                         setTimeout(() => target.removeAttribute('tabindex'), 1000);
                     }, 500);
 
-                    // Обновляем активную ссылку в навигации
                     this.updateActiveNavLink(href);
-
-                    // Аналитика
                     this.trackEvent('anchor_click', { target: targetId });
                 }
             });
@@ -450,7 +438,6 @@ class KazRoboticsApp {
     }
 
     updateActiveNavLink(href) {
-        // Обновляем активную ссылку в навигации
         document.querySelectorAll('.nav__link, .mobile-nav__link').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === href) {
@@ -460,7 +447,6 @@ class KazRoboticsApp {
     }
 
     setupForms() {
-        // Заглушка для будущих форм
         const forms = document.querySelectorAll('form');
         forms.forEach(form => {
             form.addEventListener('submit', async (e) => {
@@ -470,24 +456,19 @@ class KazRoboticsApp {
                     window.robotAssistant.setStatus('LOADING');
                 }
 
-                // Имитация отправки
                 setTimeout(() => {
                     if (window.robotAssistant) {
                         window.robotAssistant.setStatus('ACTIVE');
                         window.robotAssistant.celebrate();
                     }
                     this.showToast('Форма успешно отправлена!', 'success');
-
-                    // Сброс формы
                     form.reset();
                 }, 1500);
 
-                // Аналитика
                 this.trackEvent('form_submit', { form_id: form.id || 'unknown' });
             });
         });
 
-        // Валидация форм
         forms.forEach(form => {
             const inputs = form.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
@@ -505,7 +486,6 @@ class KazRoboticsApp {
     }
 
     setupThemeEffects() {
-        // Добавляем класс при смене темы для плавных переходов
         document.addEventListener('themechange', () => {
             document.body.classList.add('theme-changing');
             setTimeout(() => {
@@ -515,7 +495,6 @@ class KazRoboticsApp {
     }
 
     setupAuthButtons() {
-        // Обработка кнопок авторизации
         const authButtons = document.querySelectorAll('[href="#login"], [href="#register"]');
         authButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -531,8 +510,6 @@ class KazRoboticsApp {
                 }
 
                 this.showToast('Система авторизации скоро будет доступна', 'info');
-
-                // Аналитика
                 const action = btn.getAttribute('href') === '#login' ? 'login_click' : 'register_click';
                 this.trackEvent(action);
             });
@@ -540,18 +517,15 @@ class KazRoboticsApp {
     }
 
     setupInteractiveElements() {
-        // Интерактивные элементы
         const interactiveElements = document.querySelectorAll('.btn, .puzzle-tile, .news-card');
 
         interactiveElements.forEach(el => {
-            // Добавляем эффект при наведении
             el.addEventListener('mouseenter', () => {
                 if (window.robotAssistant && !this.isMobile) {
                     window.robotAssistant.followElement(el);
                 }
             });
 
-            // Добавляем эффект при клике
             el.addEventListener('click', (e) => {
                 if (el.classList.contains('puzzle-tile')) {
                     const tileId = el.dataset.tile;
@@ -566,7 +540,6 @@ class KazRoboticsApp {
     }
 
     setupAnimations() {
-        // Intersection Observer для анимаций при скролле
         if (!('IntersectionObserver' in window)) return;
 
         const observerOptions = {
@@ -579,12 +552,6 @@ class KazRoboticsApp {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animate-in');
 
-                    // Особые анимации для статистики
-                    if (entry.target.classList.contains('hero__stat-value')) {
-                        this.animateStatCounter(entry.target);
-                    }
-
-                    // Отключаем наблюдение после анимации
                     setTimeout(() => {
                         observer.unobserve(entry.target);
                     }, 1000);
@@ -592,18 +559,12 @@ class KazRoboticsApp {
             });
         }, observerOptions);
 
-        // Наблюдаем за элементами для анимации
         const animatedElements = document.querySelectorAll('.puzzle-tile, .news-card, .partner-card, .section-title, .section-subtitle');
         animatedElements.forEach(el => {
             el.classList.add('animate-on-scroll');
             observer.observe(el);
         });
 
-        // Анимация счетчиков статистики
-        const statValues = document.querySelectorAll('.hero__stat-value[data-count]');
-        statValues.forEach(el => observer.observe(el));
-
-        // Анимация для hero
         const heroContent = document.querySelector('.hero__content');
         if (heroContent) {
             setTimeout(() => {
@@ -612,59 +573,7 @@ class KazRoboticsApp {
         }
     }
 
-    animateStatCounter(element) {
-        const target = parseInt(element.dataset.count);
-        const current = parseInt(element.textContent);
-
-        if (current === target || element.dataset.animating) return;
-
-        element.dataset.animating = 'true';
-        this.animateValue(element, current, target, 2000);
-    }
-
-    animateValue(element, start, end, duration) {
-        const startTime = performance.now();
-        const animate = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            // Easing function
-            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-            const value = Math.floor(start + (end - start) * easeOutQuart);
-
-            element.textContent = value.toLocaleString('ru-RU');
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                delete element.dataset.animating;
-            }
-        };
-
-        requestAnimationFrame(animate);
-    }
-
-    initStatsCounters() {
-        // Обновляем статистику в hero
-        const statElements = {
-            'Активных проектов': systemStats.activeProjects,
-            'Участников': systemStats.totalUsers,
-            'Городов': systemStats.totalCities
-        };
-
-        Object.entries(statElements).forEach(([label, value]) => {
-            const element = Array.from(document.querySelectorAll('.hero__stat-label'))
-                .find(el => el.textContent.includes(label))
-                ?.previousElementSibling;
-
-            if (element) {
-                element.dataset.count = value;
-            }
-        });
-    }
-
     startSystemMonitoring() {
-        // Мониторинг производительности
         if ('performance' in window) {
             setTimeout(() => {
                 const perf = performance.getEntriesByType('navigation')[0];
@@ -678,7 +587,6 @@ class KazRoboticsApp {
             }, 1000);
         }
 
-        // Проверка соединения
         setInterval(() => {
             if (!navigator.onLine && window.robotAssistant) {
                 window.robotAssistant.setStatus('ERROR');
@@ -686,12 +594,10 @@ class KazRoboticsApp {
             }
         }, 5000);
 
-        // Обновление онлайн-статистики
         setInterval(() => {
             this.updateOnlineStats();
         }, 30000);
 
-        // Мониторинг ошибок
         window.addEventListener('error', (e) => {
             console.error('Ошибка приложения:', e.error);
             this.trackEvent('error', { message: e.message, filename: e.filename });
@@ -699,16 +605,15 @@ class KazRoboticsApp {
     }
 
     updateOnlineStats() {
-        // Имитация обновления онлайн статистики
         const onlineCountElement = document.querySelector('[data-online-count]');
         if (!onlineCountElement) return;
 
-        const current = parseInt(onlineCountElement.textContent);
-        const change = Math.floor(Math.random() * 10) - 3; // -3 to +6
+        const current = parseInt(onlineCountElement.textContent) || systemStats.onlineUsers;
+        const change = Math.floor(Math.random() * 10) - 3;
         const newValue = Math.max(100, Math.min(current + change, 200));
 
         if (newValue !== current) {
-            this.animateValue(onlineCountElement, current, newValue, 500);
+            this.animateCounter(onlineCountElement, current, newValue, 500);
 
             if (window.robotAssistant && Math.random() > 0.8) {
                 window.robotAssistant.showHint(`Онлайн пользователей: ${newValue}`, 2000);
@@ -717,7 +622,6 @@ class KazRoboticsApp {
     }
 
     setupPerformance() {
-        // Lazy loading для изображений
         if ('IntersectionObserver' in window) {
             const imageObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -737,7 +641,6 @@ class KazRoboticsApp {
             });
         }
 
-        // Prefetch важных страниц
         if ('connection' in navigator && navigator.connection.saveData !== true) {
             const importantPages = ['about.html', 'projects.html', 'sport.html'];
             importantPages.forEach(page => {
@@ -748,9 +651,7 @@ class KazRoboticsApp {
             });
         }
 
-        // Оптимизация для мобильных устройств
         if (this.isMobile) {
-            // Отключаем некоторые анимации на слабых устройствах
             if ('hardwareConcurrency' in navigator && navigator.hardwareConcurrency < 4) {
                 document.body.classList.add('reduce-animations');
             }
@@ -758,7 +659,6 @@ class KazRoboticsApp {
     }
 
     checkBrowserSupport() {
-        // Проверка поддержки современных возможностей
         const unsupportedFeatures = [];
 
         if (!('IntersectionObserver' in window)) {
@@ -776,14 +676,12 @@ class KazRoboticsApp {
             );
         }
 
-        // Проверка поддержки Service Worker (для будущего PWA)
         if ('serviceWorker' in navigator) {
             console.log('Service Worker поддерживается');
         }
     }
 
     showToast(message, type = 'success') {
-        // Создаем toast-уведомление
         const toast = document.createElement('div');
         toast.className = `toast toast--${type}`;
         toast.setAttribute('role', 'alert');
@@ -795,16 +693,13 @@ class KazRoboticsApp {
 
         document.body.appendChild(toast);
 
-        // Анимация появления
         setTimeout(() => toast.classList.add('toast--show'), 10);
 
-        // Закрытие
         const closeBtn = toast.querySelector('.toast__close');
         closeBtn.addEventListener('click', () => {
             this.closeToast(toast);
         });
 
-        // Автоматическое закрытие
         setTimeout(() => {
             if (toast.parentNode) {
                 this.closeToast(toast);
@@ -824,7 +719,6 @@ class KazRoboticsApp {
     hidePreloader() {
         if (!this.preloader) return;
 
-        // Ждем полной загрузки страницы
         window.addEventListener('load', () => {
             setTimeout(() => {
                 this.preloader.style.opacity = '0';
@@ -833,7 +727,6 @@ class KazRoboticsApp {
                 setTimeout(() => {
                     this.preloader.remove();
 
-                    // Показываем приветственное сообщение
                     if (window.robotAssistant) {
                         setTimeout(() => {
                             window.robotAssistant.showHint('Добро пожаловать в KazRobotics!', 4000);
@@ -844,7 +737,6 @@ class KazRoboticsApp {
             }, 500);
         });
 
-        // Фолбэк на случай если load событие не сработает
         setTimeout(() => {
             if (this.preloader.parentNode) {
                 this.preloader.style.opacity = '0';
@@ -854,7 +746,6 @@ class KazRoboticsApp {
     }
 
     trackEvent(eventName, data = {}) {
-        // Заглушка для аналитики
         const eventData = {
             event: eventName,
             timestamp: new Date().toISOString(),
@@ -864,9 +755,6 @@ class KazRoboticsApp {
         };
 
         console.log('Аналитика:', eventData);
-
-        // В будущем можно добавить отправку на сервер
-        // fetch('/api/analytics', { method: 'POST', body: JSON.stringify(eventData) });
     }
 
     escapeHtml(str) {
@@ -875,9 +763,7 @@ class KazRoboticsApp {
         return div.innerHTML;
     }
 
-    // Публичные методы для взаимодействия с другими компонентами
     updateNews(newsData) {
-        // Для будущего обновления новостей через API
         console.log('Обновление новостей:', newsData);
     }
 
@@ -895,9 +781,7 @@ class KazRoboticsApp {
         return this.menuOpen;
     }
 
-    // Метод для обновления навигации
     updateNavigation(activeLink) {
-        // Обновляем активную ссылку в десктопной навигации
         document.querySelectorAll('.nav__link').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === activeLink) {
@@ -905,7 +789,6 @@ class KazRoboticsApp {
             }
         });
 
-        // Обновляем активную ссылку в мобильной навигации
         document.querySelectorAll('.mobile-nav__link').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === activeLink) {
@@ -915,9 +798,7 @@ class KazRoboticsApp {
     }
 }
 
-// Инициализация при полной загрузке страницы
 window.addEventListener('load', () => {
-    // Определяем активную страницу
     const currentPath = window.location.pathname;
     const activeLink = currentPath.includes('about.html') ? 'about.html' :
         currentPath.includes('projects.html') ? 'projects.html' :
@@ -926,26 +807,22 @@ window.addEventListener('load', () => {
                     currentPath.includes('calendar.html') ? 'calendar.html' :
                         currentPath.includes('shop.html') ? 'shop.html' : '#directions';
 
-    // Запускаем приложение
     window.app = new KazRoboticsApp();
 
-    // Обновляем навигацию
     setTimeout(() => {
         if (window.app) {
             window.app.updateNavigation(activeLink);
         }
     }, 100);
 
-    // Отправляем аналитику загрузки
     window.app.trackEvent('page_load', {
         path: currentPath,
         theme: window.app.getCurrentTheme(),
         is_mobile: window.app.isMobile
     });
 
-    console.log('KazRobotics Frontend v0.1.0 запущен');
+    console.log('KazRobotics Frontend v1.0.0 запущен');
 
-    // Проверяем авторизацию (будущая функциональность)
     setTimeout(() => {
         if (window.robotAssistant && !localStorage.getItem('userToken')) {
             window.robotAssistant.showHint(
@@ -956,7 +833,6 @@ window.addEventListener('load', () => {
     }, 10000);
 });
 
-// Обработка ошибок
 window.addEventListener('error', (e) => {
     console.error('Ошибка приложения:', e.error);
 
@@ -967,7 +843,6 @@ window.addEventListener('error', (e) => {
         );
     }
 
-    // Отправляем ошибку в аналитику
     if (window.app) {
         window.app.trackEvent('error', {
             message: e.message,
@@ -978,7 +853,6 @@ window.addEventListener('error', (e) => {
     }
 });
 
-// Обработка promise rejections
 window.addEventListener('unhandledrejection', (e) => {
     console.error('Необработанный промис:', e.reason);
 
@@ -990,9 +864,7 @@ window.addEventListener('unhandledrejection', (e) => {
     }
 });
 
-// Сохранение состояния
 window.addEventListener('beforeunload', () => {
-    // Сохраняем состояние приложения
     const state = {
         lastVisited: new Date().toISOString(),
         activeFilter: window.app?.currentFilter || 'all',
@@ -1003,21 +875,18 @@ window.addEventListener('beforeunload', () => {
     sessionStorage.setItem('appState', JSON.stringify(state));
 });
 
-// Восстановление состояния при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     try {
         const savedState = sessionStorage.getItem('appState');
         if (savedState) {
             const state = JSON.parse(savedState);
 
-            // Восстанавливаем позицию скролла
             if (state.scrollPosition > 0) {
                 setTimeout(() => {
                     window.scrollTo(0, state.scrollPosition);
                 }, 100);
             }
 
-            // Восстанавливаем тему если нет сохраненной
             if (!localStorage.getItem('theme') && state.theme) {
                 document.documentElement.setAttribute('data-theme', state.theme);
             }
@@ -1027,7 +896,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Обработка офлайн/онлайн статуса
 window.addEventListener('online', () => {
     if (window.robotAssistant) {
         window.robotAssistant.setStatus('ACTIVE');
@@ -1050,5 +918,4 @@ window.addEventListener('offline', () => {
     }
 });
 
-// Экспорт приложения
 export default KazRoboticsApp;
