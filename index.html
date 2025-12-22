@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KazRobotics — Федерация Робототехники Казахстана | Объединяем технологии и инновации</title>
-    <meta name="description" content="Официальная платформа Федерации Робототехники Казахстана. Проекты, соревнования, обучение, календарь мероприятий и партнёрства.">
-    <meta name="keywords" content="робототехника, Казахстан, KazRobotics, соревнования, обучение, проекты, STEM">
+    <meta name="description" content="Официальная платформа Республиканского общественного объединения 'Казахстанская Федерация образовательной и спортивной робототехники'. Проекты, соревнования, обучение, календарь мероприятий и партнёрства.">
+    <meta name="keywords" content="робототехника, Казахстан, KazRobotics, соревнования, обучение, проекты, STEM, образовательная робототехника, спортивная робототехника">
     <meta name="author" content="KazRobotics Federation">
 
     <!-- Open Graph -->
     <meta property="og:title" content="KazRobotics — Федерация Робототехники Казахстана">
-    <meta property="og:description" content="Объединяем энтузиастов робототехники Казахстана">
+    <meta property="og:description" content="Республиканское общественное объединение 'Казахстанская Федерация образовательной и спортивной робототехники'">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://kazrobotics.kz">
     <meta property="og:image" content="https://kazrobotics.kz/assets/images/og-image.jpg">
@@ -20,8 +20,8 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="assets/images/Logo KazRobotics png.png">
+    <link rel="apple-touch-icon" href="assets/images/Logo KazRobotics png.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,6 +47,19 @@
             .no-js .theme-toggle { display: none; }
         </style>
     </noscript>
+
+    <!-- Prevent hyphenation -->
+    <style>
+        .no-hyphens {
+            white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .no-hyphens {
+                white-space: normal;
+                word-break: keep-all;
+            }
+        }
+    </style>
 </head>
 <body class="no-js">
 <!-- Progress bar -->
@@ -70,11 +83,12 @@
         <div class="container header__inner">
             <!-- Logo -->
             <a class="brand" href="index.html" aria-label="KazRobotics - На главную">
-                    <span class="brand__logo" aria-hidden="true">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L14.5 8.5L21 9L16 13L17.5 19.5L12 16L6.5 19.5L8 13L3 9L9.5 8.5L12 2Z" fill="currentColor"/>
-                        </svg>
-                    </span>
+                <span class="brand__logo" aria-hidden="true">
+                    <img src="assets/images/Logo KazRobotics png.png"
+                         alt="Логотип KazRobotics"
+                         width="40"
+                         height="40">
+                </span>
                 <span class="brand__text">KazRobotics</span>
             </a>
 
@@ -173,12 +187,13 @@
                 <div class="hero__content">
                     <h1 id="hero-title" class="hero__title">
                         Объединяем энтузиастов<br>
-                        <span class="text-gradient">робототехники Казахстана</span>
+                        <span class="text-gradient no-hyphens">робототехники Казахстана</span>
                     </h1>
 
                     <p class="hero__subtitle">
-                        Единая платформа федерации: проекты, соревнования, обучение,
-                        календарь мероприятий и партнёрства — всё в одном месте.
+                        Республиканское общественное объединение
+                        <strong>"Казахстанская Федерация образовательной и спортивной робототехники"</strong>.
+                        Единая платформа для проектов, соревнований, обучения и партнёрств — всё в одном месте.
                         Присоединяйтесь к сообществу инноваторов и исследователей будущего.
                     </p>
 
@@ -189,7 +204,7 @@
                                 <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
-                        <a href="#about" class="btn btn--secondary" data-analytics="cta-hero-secondary">
+                        <a href="about.html" class="btn btn--secondary" data-analytics="cta-hero-secondary">
                             <span>О федерации</span>
                         </a>
                     </div>
@@ -395,10 +410,10 @@
 
                 <div class="partners__grid">
                     <div class="partner-card">
-                        <img src="assets/partners/kaznu.svg" alt="Логотип КазНУ" class="partner-card__logo" loading="lazy">
+                        <img src="assets/partners/kaznu.svg" alt="Логотип КазНУ им. аль-Фараби" class="partner-card__logo" loading="lazy">
                     </div>
                     <div class="partner-card">
-                        <img src="assets/partners/sdu.svg" alt="Логотип SDU" class="partner-card__logo" loading="lazy">
+                        <img src="assets/partners/sdu.svg" alt="Логотип Университета Сулеймана Демиреля" class="partner-card__logo" loading="lazy">
                     </div>
                     <div class="partner-card">
                         <img src="assets/partners/kbtu.svg" alt="Логотип КБТУ" class="partner-card__logo" loading="lazy">
@@ -422,7 +437,7 @@
                 <div class="cta__inner">
                     <h2 id="cta-title" class="cta__title">Готовы начать?</h2>
                     <p class="cta__subtitle">
-                        Присоединяйтесь к федерации робототехники Казахстана уже сегодня.
+                        Присоединяйтесь к Казахстанской Федерации образовательной и спортивной робототехники уже сегодня.
                         Регистрируйте проекты, участвуйте в соревнованиях, развивайте свои навыки
                         и становитесь частью технологического будущего страны.
                     </p>
@@ -449,13 +464,15 @@
                 <div class="footer__main">
                     <div class="footer__brand">
                         <div class="footer__logo">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 2L14.5 8.5L21 9L16 13L17.5 19.5L12 16L6.5 19.5L8 13L3 9L9.5 8.5L12 2Z" fill="var(--burgundy-accent)"/>
-                            </svg>
+                            <img src="assets/images/Logo KazRobotics png.png"
+                                 alt="Логотип KazRobotics"
+                                 width="24"
+                                 height="24">
                             <span>KazRobotics</span>
                         </div>
                         <p class="footer__description">
-                            Федерация робототехники Казахстана.
+                            <strong>Республиканское общественное объединение
+                                "Казахстанская Федерация образовательной и спортивной робототехники"</strong>.
                             Объединяем технологии, образование и инновации для развития страны.
                         </p>
                         <div class="footer__social">
@@ -511,8 +528,8 @@
 
                 <div class="footer__bottom">
                     <div class="footer__copyright">
-                        <span>© 2024 KazRobotics Federation. Все права защищены.</span>
-                        <span class="footer__version">v0.1.0</span>
+                        <span>© 2024 Казахстанская Федерация образовательной и спортивной робототехники. Все права защищены.</span>
+                        <span class="footer__version">v1.0.0</span>
                     </div>
                     <div class="footer__legal">
                         <a href="#privacy" class="footer__link">Политика конфиденциальности</a>

@@ -1837,3 +1837,14 @@
         flex-direction: column;
     }
 }
+/* В components.css для .brand__logo */
+.brand__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1); /* Для темной темы */
+}
+
+:root[data-theme="light"] .brand__logo img {
+    filter: none; /* Для светлой темы */
+}

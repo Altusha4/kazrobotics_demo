@@ -111,7 +111,6 @@
         --stroke-default: rgba(0, 0, 0, 0.1);
         --stroke-hover: rgba(168, 50, 66, 0.3);
         --stroke-active: rgba(168, 50, 66, 0.5);
-
         --shadow-color: rgba(0, 0, 0, 0.1);
         --shadow-glow: 0 0 30px rgba(168, 50, 66, 0.15);
     }

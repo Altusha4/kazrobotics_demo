@@ -415,3 +415,13 @@ section {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--burgundy-accent);
 }
+/* В base.css или main.css */
+.hero__title {
+    white-space: nowrap;
+}
+
+/* Или для конкретной строки */
+.text-gradient {
+    white-space: nowrap;
+    display: inline-block;
+}
