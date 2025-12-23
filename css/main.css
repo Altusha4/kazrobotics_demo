@@ -285,3 +285,110 @@
         max-height: 30px;
     }
 }
+/* Секция новостей с индиго градиентом */
+.news {
+    background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(79, 70, 229, 0.03) 100%);
+}
+
+/* CTA секция с индиго градиентом */
+.cta {
+    background: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.05) 0%,
+    rgba(20, 184, 166, 0.03) 100%);
+}
+
+/* Новости активная кнопка фильтра */
+.news__control-btn.active {
+    background: var(--indigo-main);
+    border-color: var(--indigo-main);
+    color: white;
+}
+.text-neutral {
+    color: var(--text-primary);
+}
+/* Герой секция */
+.hero__title {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: heroGradient 8s ease infinite;
+}
+
+@keyframes heroGradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.hero__stat-value {
+    color: var(--tech-cyan);
+}
+
+/* Секция новостей */
+.news {
+    background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.05) 100%);
+}
+
+/* Секция партнёров */
+.partner-card:hover {
+    border-color: var(--tech-cyan);
+}
+
+.partner-card__logo {
+    filter: grayscale(1) opacity(0.6);
+}
+
+.partner-card:hover .partner-card__logo {
+    filter: grayscale(0) opacity(1);
+}
+
+/* CTA секция */
+.cta {
+    background: linear-gradient(135deg,
+    rgba(30, 64, 175, 0.08) 0%,
+    rgba(6, 182, 212, 0.05) 100%);
+}
+
+.cta__title {
+    background: var(--gradient-tech);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+/* About page specific */
+.highlight-box {
+    border-left: 4px solid var(--tech-cyan);
+    background: var(--gradient-card);
+}
+
+.stat-card {
+    background: var(--gradient-card);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.stat-value {
+    color: var(--tech-cyan);
+}
+
+.timeline::before {
+    background: var(--gradient-tech);
+}
+
+.timeline-year {
+    background: var(--gradient-tech);
+    color: white;
+}
+
+.timeline-content {
+    background: var(--gradient-card);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}

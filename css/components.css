@@ -949,3 +949,141 @@
         transform: none !important;
     }
 }
+/* Бренд - используем цвета из логотипа */
+.brand__logo {
+    background: var(--gradient-tech);
+    color: white;
+}
+
+.brand__text {
+    background: var(--gradient-tech);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Навигация - цвета из логотипа */
+.nav__link:hover {
+    color: var(--tech-cyan);
+}
+
+.nav__link.active {
+    color: var(--tech-cyan);
+}
+
+.nav__link::after {
+    background: var(--gradient-tech);
+}
+
+/* Кнопки - градиент из логотипа */
+.btn--primary {
+    background: var(--gradient-tech);
+    color: white;
+    box-shadow: 0 8px 24px rgba(30, 64, 175, 0.25);
+}
+
+.btn--primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--tech-cyan) 0%, var(--tech-purple) 100%);
+    box-shadow: 0 12px 32px rgba(6, 182, 212, 0.35);
+}
+
+/* Плитки - градиенты из логотипа */
+.puzzle-tile {
+    background: var(--gradient-card);
+}
+
+.puzzle-tile:hover {
+    border-color: var(--tech-cyan);
+    box-shadow: 0 20px 60px var(--shadow-color),
+    0 0 30px rgba(6, 182, 212, 0.2);
+}
+
+.puzzle-tile.connected {
+    border-color: var(--tech-cyan);
+    background: linear-gradient(135deg,
+    rgba(6, 182, 212, 0.1),
+    rgba(139, 92, 246, 0.05));
+}
+
+.puzzle-tile__icon {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--tech-cyan);
+}
+
+/* Бейджи */
+.puzzle-tile__badge {
+    background: var(--gradient-tech);
+    color: white;
+}
+
+/* Робот - цвета из логотипа */
+.robot-guide {
+    background: var(--gradient-card);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    box-shadow: 0 20px 60px var(--shadow-color),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 0 30px rgba(6, 182, 212, 0.2);
+}
+
+.robot-eye {
+    background: var(--tech-cyan);
+    box-shadow: 0 0 20px var(--tech-cyan);
+}
+
+.robot-antenna {
+    background: var(--tech-cyan);
+}
+
+.status-dot {
+    background: var(--green-active);
+}
+
+.metric-value {
+    color: var(--tech-cyan);
+}
+
+/* Карточки новостей */
+.news-card:hover {
+    border-color: var(--tech-cyan);
+}
+
+.news-card__tag {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--tech-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+/* Фильтры новостей */
+.news__control-btn.active {
+    background: var(--gradient-tech);
+    border-color: transparent;
+    color: white;
+}
+
+/* Футер */
+.footer {
+    background: var(--bg-secondary);
+}
+
+.footer__social-link:hover {
+    background: var(--gradient-tech);
+    color: white;
+}
+
+.footer__link:hover {
+    color: var(--tech-cyan);
+}
+
+/* Хедер */
+.header {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+:root[data-theme="light"] .header {
+    background: rgba(248, 250, 252, 0.9);
+}
+
+/* Мобильное меню */
+.mobile-nav__link:hover {
+    color: var(--tech-cyan);
+}
